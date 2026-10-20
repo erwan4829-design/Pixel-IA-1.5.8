@@ -1,0 +1,19 @@
+{
+ "id": "./",
+ "name": "Pixel IA",
+ "short_name": "Pixel IA",
+ "description": "Pixel IA, ton assistant IA gratuit",
+ "lang": "fr",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait",
+ "background_color": "#0f1115",
+ "theme_color": "#6d5efc",
+ "icons": [
+  {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+  {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+  {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable"},
+  {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+ ]
+}

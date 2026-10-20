@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pixel IA</title>
+<link rel="manifest" href="manifest.webmanifest">
+<script async src="https://js.puter.com/v2/"></script>
+<meta name="theme-color" content="#6d5efc">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#fff;--fg:#16181d;--mut:#6b7280;--card:#f3f4f8;--bd:#e3e5ec;--ac:#6d5efc;--ac2:#ff5fa2;--sh:rgba(0,0,0,.35);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--fs:16px}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1115;--fg:#eceef3;--mut:#9aa1b0;--card:#1a1d25;--bd:#2a2e39;--sh:rgba(0,0,0,.6)}}
+:root[data-theme="dark"]{--bg:#0f1115;--fg:#eceef3;--mut:#9aa1b0;--card:#1a1d25;--bd:#2a2e39;--sh:rgba(0,0,0,.6)}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--fg);font:var(--fs)/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+#app{height:100%;display:flex;flex-direction:column;max-width:820px;margin:0 auto}
+header{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--bd)}
+.ico{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:20px}
+.ico:active{background:var(--card)}
+#pill{margin:0 auto;background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:7px 14px;font-weight:600;font-size:.9em;display:flex;gap:6px;align-items:center}
+#msgs{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:12px}
+.m{max-width:88%;padding:10px 14px;border-radius:18px;word-wrap:break-word;overflow-wrap:anywhere}
+.u{align-self:flex-end;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border-bottom-right-radius:6px;white-space:pre-wrap}
+.a{align-self:flex-start;background:var(--card);border-bottom-left-radius:6px}
+.a pre{background:#0d1017;color:#e6e9f2;padding:10px;border-radius:10px;overflow-x:auto;font-size:.85em;margin:8px 0}
+.a code{font-family:ui-monospace,Menlo,monospace;background:rgba(127,127,127,.2);padding:1px 5px;border-radius:5px;font-size:.9em}
+.a pre code{background:none;padding:0}
+.tag{font-size:.72em;color:var(--mut);margin-bottom:3px;font-weight:600}
+.dots span{display:inline-block;width:7px;height:7px;margin:0 2px;border-radius:50%;background:var(--mut);animation:b 1s infinite}
+.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
+@keyframes b{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.hero{margin:auto;text-align:center;padding:20px}
+.logo{width:64px;height:64px;border-radius:18px;margin:0 auto 12px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:grid;place-items:center;color:#fff;font-weight:800;font-size:28px}
+.hero h1{margin:0 0 4px;font-size:1.5em}.hero p{margin:0 0 16px;color:var(--mut)}
+.chips{display:flex;flex-direction:column;gap:8px}
+.chip{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:10px 14px;text-align:left}
+#bar{padding:10px 12px;border-top:1px solid var(--bd);display:flex;gap:8px;align-items:flex-end}
+#in{flex:1;resize:none;max-height:140px;min-height:44px;border:1px solid var(--bd);background:var(--card);color:var(--fg);border-radius:22px;padding:10px 16px;font:inherit;outline:none}
+#send{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-size:20px}
+#send:disabled{opacity:.4}
+.ov{position:fixed;inset:0;background:var(--sh);display:none;z-index:20}
+.ov.on{display:block}
+#drawer{position:fixed;top:0;bottom:0;left:0;width:min(82%,320px);background:var(--bg);z-index:30;transform:translateX(-102%);transition:transform .22s;display:flex;flex-direction:column;padding:calc(12px + env(safe-area-inset-top,0px)) 12px calc(12px + env(safe-area-inset-bottom,0px));border-right:1px solid var(--bd)}
+#drawer.on{transform:none}
+.btn{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border-radius:14px;padding:12px 14px;font-weight:600;width:100%}
+.btn2{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px 14px;width:100%;text-align:left}
+.lbl{font-size:.75em;color:var(--mut);margin:16px 4px 6px;text-transform:uppercase;letter-spacing:.05em}
+#hist{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+.h{display:flex;align-items:center;border-radius:10px}
+.h.cur{background:var(--card)}
+.h button:first-child{flex:1;text-align:left;padding:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.h .x{padding:8px 10px;color:var(--mut)}
+.sheet{position:fixed;left:0;right:0;bottom:0;max-width:820px;margin:0 auto;background:var(--bg);z-index:40;border-radius:22px 22px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));transform:translateY(105%);transition:transform .22s;max-height:85%;overflow-y:auto;border:1px solid var(--bd)}
+.sheet.on{transform:none}
+.sheet h2{margin:0 0 12px;font-size:1.15em}
+.opt{display:block;width:100%;text-align:left;border:1px solid var(--bd);background:var(--card);border-radius:16px;padding:12px 14px;margin-bottom:8px}
+.opt.sel{border-color:var(--ac);box-shadow:0 0 0 2px var(--ac) inset}
+.opt b{display:flex;justify-content:space-between;gap:8px}
+.opt small{color:var(--mut);display:block;margin-top:2px}
+.badge{font-size:.7em;padding:2px 8px;border-radius:10px;background:var(--ac);color:#fff;font-weight:600;white-space:nowrap}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd)}
+.seg{display:flex;background:var(--card);border-radius:12px;padding:3px;border:1px solid var(--bd)}
+.seg button{padding:6px 11px;border-radius:9px;font-size:.85em}
+.seg .on{background:var(--ac);color:#fff}
+.note{color:var(--mut);font-size:.85em;margin:10px 0}
+.act{display:flex;gap:8px;margin-top:8px}
+.act button{font-size:.78em;background:var(--bg);border:1px solid var(--bd);border-radius:14px;padding:5px 12px;color:var(--mut)}
+.act button.on{color:#fff;background:var(--ac);border-color:var(--ac)}
+.ver{font-family:ui-monospace,Menlo,monospace;color:var(--mut)}
+.news{padding-left:18px;margin:0}.news li{margin-bottom:10px}
+.price{font-size:1.8em;font-weight:800}
+.feat{margin:8px 0 12px;padding-left:18px}
+#login{position:fixed;inset:0;background:var(--bg);z-index:80;display:none;align-items:center;justify-content:center;padding:calc(24px + env(safe-area-inset-top,0px)) 24px 24px;overflow:auto}#login.on{display:flex}
+.lbox{width:100%;max-width:360px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:stretch}.lbox h1{margin:0}.lbox p{margin:0;color:var(--mut)}#lgoogle{display:flex;justify-content:center}
+.fld{width:100%;border:1px solid var(--bd);background:var(--card);color:var(--fg);border-radius:14px;padding:12px 14px;font:inherit;outline:none}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:9px 16px;border-radius:20px;font-size:.88em;z-index:60;display:none;max-width:90%}
+</style></head>
+<body>
+<div id="app">
+ <header>
+  <button class="ico" id="burger" aria-label="Menu">☰</button>
+  <button id="pill"><span id="pname"></span><span>▾</span></button>
+  <button class="ico" id="newtop" aria-label="Nouvelle page">✎</button>
+ </header>
+ <div id="msgs"></div>
+ <div id="bar">
+  <textarea id="in" rows="1" placeholder="Pose ta question à Pixel IA…"></textarea>
+  <button id="send" aria-label="Envoyer">➤</button>
+ </div>
+</div>
+
+<div class="ov" id="ov"></div>
+<aside id="drawer">
+ <button class="btn" id="new">＋ Nouvelle page</button>
+ <div class="lbl">Conversations</div>
+ <div id="hist"></div>
+ <button class="btn2" id="openset">⚙️ Paramètres</button>
+</aside>
+
+<div class="sheet" id="models"><h2>Choisir un modèle</h2><div id="mlist"></div></div>
+<div class="sheet" id="set"><h2>Paramètres</h2>
+ <div class="row"><span>Thème</span><div class="seg" id="theme"><button data-v="auto">Auto</button><button data-v="light">Clair</button><button data-v="dark">Sombre</button></div></div>
+ <div class="row"><span>Taille du texte</span><div class="seg" id="fs"><button data-v="14">A</button><button data-v="16">A+</button><button data-v="19">A++</button></div></div>
+ <div class="row"><span>Modèle par défaut</span><button class="badge" id="setmodel"></button></div>
+ 
+ <div class="row"><span>Compte</span><b id="acc" style="font-size:.85em;text-align:right"></b></div>
+ <div class="row"><span>Vitesse de la voix</span><div class="seg" id="rate"><button data-v="0.9">Lente</button><button data-v="1.05">Normale</button><button data-v="1.25">Rapide</button></div></div>
+ <div style="padding-top:10px;display:flex;flex-direction:column;gap:8px">
+  <button class="btn" id="dl">📲 Installer sur le téléphone</button>
+  <button class="btn2" id="dlf">⬇️ Télécharger l’appli (fichier)</button>
+  <button class="btn2" id="quota">📊 Mes quotas</button>
+  <button class="btn2" id="gkeybtn">🔑 Clé IA gratuite (Gemini)</button>
+  <button class="btn2" id="pconn">🔗 Connecter l’IA (Puter)</button>
+  <button class="btn2" id="accbtn"></button>
+  <button class="btn2" id="news">🆕 Nouveautés</button>
+  <button class="btn2" id="ver">ℹ️ Code de version</button>
+  <button class="btn2" id="vt">🔈 Tester la voix</button>
+  
+  <button class="btn2" id="clear">🗑️ Effacer tout l’historique</button>
+  
+ </div>
+ <p class="note">Pixel IA ne génère pas encore d’images ni de vidéos.</p>
+</div>
+<div class="sheet" id="lock"><h2>🔒 Limite atteinte</h2><p id="locktxt"></p>
+ <button class="btn" id="golock">Voir Premium – 35,90 €</button>
+ <button class="btn2" id="closelock" style="margin-top:8px">Rester en gratuit</button>
+</div>
+<div class="sheet" id="info"><h2 id="ititle"></h2><div id="ibody"></div><button class="btn2" id="iclose" style="margin-top:12px">Fermer</button></div>
+<div id="login"><div class="lbox"><svg width="76" height="76" viewBox="0 0 64 64" style="display:block;margin:0 auto"><defs><linearGradient id="lg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6d5efc"/><stop offset="1" stop-color="#ff5fa2"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#lg2)"/><g fill="#fff"><rect x="12" y="14" width="24" height="6"/><rect x="12" y="20" width="6" height="6"/><rect x="30" y="20" width="6" height="6"/><rect x="12" y="26" width="6" height="6"/><rect x="30" y="26" width="6" height="6"/><rect x="12" y="32" width="24" height="6"/><rect x="12" y="38" width="6" height="6"/><rect x="12" y="44" width="6" height="6"/><path d="M50 10l2.4 6.6L59 19l-6.6 2.4L50 28l-2.4-6.6L41 19l6.6-2.4z"/></g></svg>
+<h1>Bienvenue sur Pixel IA</h1><p>Connecte-toi pour discuter avec l’IA gratuitement.</p>
+<input id="lmail" class="fld" type="email" autocomplete="email" placeholder="Adresse e-mail">
+<input id="lpass" class="fld" type="password" autocomplete="current-password" placeholder="Mot de passe (6 caractères min.)">
+<button class="btn" id="lputer">Se connecter</button>
+<button class="btn2" id="lnew" style="text-align:center">Créer un compte</button>
+<div id="lgoogle"></div>
+<button class="btn2" id="lguest" style="text-align:center">Continuer sans compte</button>
+<p class="note" id="lnote">Le compte est enregistré sur cet appareil. Au premier message, l’IA te demandera de te connecter à Puter (gratuit).</p></div></div>
+<div id="toast"></div>
+
+<script>
+var $=function(i){return document.getElementById(i)};
+var MODELS={
+ flash:{n:"Pixel IA 1.2 Flash",d:"Réponses très rapides, idéal pour les questions simples",tier:"quick",lim:0,sys:"Tu es Pixel IA 1.2 Flash. Réponds de façon très brève et directe (1 à 3 phrases maximum)."},
+ think:{n:"Pixel IA 1.3 Réflexion",d:"Réfléchit plus longtemps, réponses plus construites",tier:"default",lim:0,sys:"Tu es Pixel IA 1.3 Réflexion. Raisonne soigneusement, étape par étape, puis donne une réponse claire et bien construite."},
+ pro:{n:"Pixel IA 1.5 Pro",d:"Réfléchit encore plus, réponses ultra construites, très fort en code",tier:"complex",lim:0,sys:"Tu es Pixel IA 1.5 Pro. Donne une réponse approfondie, rigoureuse et très structurée. Tu excelles en programmation : utilise des blocs de code commentés."}
+};
+var COMMON=" Tu ne peux pas générer d’images ni de vidéos pour l’instant ; si on te le demande, dis que ce n’est pas encore disponible. Réponds dans la langue de l’utilisateur.";
+var VER="1.6.0",PAY_URL="",PIXEL_API="",PREM={think:300000,pro:5000};
+var S={convs:[],cur:null,model:"flash",plan:"free",used:{think:0,pro:0},tot:{think:0,pro:0},cnt:{day:"",flash:0,think:0,pro:0},theme:"auto",fs:"16",rate:"1.05"};
+try{var r=localStorage.getItem("pixelia");if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
+function save(){try{localStorage.setItem("pixelia",JSON.stringify(S))}catch(e){}}
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function md(t){
+ var parts=t.split("```"),o="";
+ for(var i=0;i<parts.length;i++){
+  if(i%2){o+="<pre><code>"+esc(parts[i].replace(/^[\w+-]*\n/,""))+"</code></pre>"}
+  else{o+=esc(parts[i]).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/`([^`\n]+)`/g,"<code>$1</code>").replace(/^#+\s*(.+)$/gm,"<b>$1</b>").replace(/\n/g,"<br>")}
+ }
+ return o;
+}
+function conv(){return S.convs.find(function(c){return c.id===S.cur})}
+function toast(t){var e=$("toast");e.textContent=t;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(function(){e.style.display="none"},2600)}
+function left(k){var m=MODELS[k];if(!m.lim||S.plan==="premium")return null;return Math.max(0,m.lim-S.used[k])}
+
+function applyPrefs(){
+ var d=document.documentElement;
+ if(S.theme==="auto")d.removeAttribute("data-theme");else d.setAttribute("data-theme",S.theme);
+ d.style.setProperty("--fs",S.fs+"px");
+ document.querySelectorAll("#theme button").forEach(function(b){b.classList.toggle("on",b.dataset.v===S.theme)});
+ document.querySelectorAll("#fs button").forEach(function(b){b.classList.toggle("on",b.dataset.v===S.fs)});
+ $("pname").textContent=MODELS[S.model].n;
+ $("setmodel").textContent=MODELS[S.model].n;
+ var li=S.user&&!S.user.guest;$("acc").textContent=li?(S.user.name||S.user.email):"Invité";$("accbtn").textContent=li?"🚪 Se déconnecter":"🔑 Se connecter";
+ 
+ document.querySelectorAll("#rate button").forEach(function(b){b.classList.toggle("on",b.dataset.v===S.rate)});
+ 
+}
+function renderHist(){
+ var h=$("hist");h.innerHTML="";
+ if(!S.convs.length){h.innerHTML='<p class="note" style="padding:0 6px">Aucune conversation pour l’instant.</p>';return}
+ S.convs.forEach(function(c){
+  var d=document.createElement("div");d.className="h"+(c.id===S.cur?" cur":"");
+  var a=document.createElement("button");a.textContent="💬 "+c.title;a.onclick=function(){S.cur=c.id;save();closeAll();render()};
+  var x=document.createElement("button");x.className="x";x.textContent="✕";x.setAttribute("aria-label","Supprimer");
+  x.onclick=function(){S.convs=S.convs.filter(function(z){return z.id!==c.id});if(S.cur===c.id)S.cur=null;save();renderHist();render()};
+  d.appendChild(a);d.appendChild(x);h.appendChild(d);
+ });
+}
+function bubble(m){
+ var d=document.createElement("div");
+ if(m.r==="u"){d.className="m u";d.textContent=m.t}
+ else{d.className="m a";d.innerHTML='<div class="tag">'+esc(MODELS[m.m||"flash"].n)+'</div><div class="body">'+(m.t?md(m.t):'<span class="dots"><span></span><span></span><span></span></span>')+'</div>'}
+ if(m.r==="a"&&m.t){var a=document.createElement("div");a.className="act";
+  var b=document.createElement("button");b.className="lis"+(speaking===m?" on":"");b.textContent=speaking===m?"⏹ Arrêter":"🔊 Écouter";b.onclick=function(){listen2(m,b)};
+  var cp=document.createElement("button");cp.textContent="Copier";cp.onclick=function(){try{navigator.clipboard.writeText(m.t).then(function(){toast("Copié")},function(){toast("Copie impossible")})}catch(e){toast("Copie impossible")}};
+  a.appendChild(b);a.appendChild(cp);d.appendChild(a)}
+ return d;
+}
+function render(){
+ applyPrefs();renderHist();
+ var box=$("msgs");box.innerHTML="";var c=conv();
+ if(!c||!c.msgs.length){
+  box.innerHTML='<div class="hero"><svg width="76" height="76" viewBox="0 0 64 64" style="display:block;margin:0 auto 12px"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6d5efc"/><stop offset="1" stop-color="#ff5fa2"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#lg)"/><g fill="#fff"><rect x="12" y="14" width="24" height="6"/><rect x="12" y="20" width="6" height="6"/><rect x="30" y="20" width="6" height="6"/><rect x="12" y="26" width="6" height="6"/><rect x="30" y="26" width="6" height="6"/><rect x="12" y="32" width="24" height="6"/><rect x="12" y="38" width="6" height="6"/><rect x="12" y="44" width="6" height="6"/><path d="M50 10l2.4 6.6L59 19l-6.6 2.4L50 28l-2.4-6.6L41 19l6.6-2.4z"/></g></svg><h1>Pixel IA</h1><p>Que veux-tu savoir aujourd’hui ?</p><div class="chips"></div></div>';
+  ["Explique-moi la photosynthèse simplement","Écris une fonction Python qui trie une liste","Donne-moi 5 idées de repas rapides"].forEach(function(s){
+   var b=document.createElement("button");b.className="chip";b.textContent=s;b.onclick=function(){$("in").value=s;send()};box.querySelector(".chips").appendChild(b)});
+  return;
+ }
+ c.msgs.forEach(function(m){box.appendChild(bubble(m))});
+ box.scrollTop=box.scrollHeight;
+}
+function closeAll(){["drawer","models","set","lock","info"].forEach(function(i){$(i).classList.remove("on")});$("ov").classList.remove("on")}
+function open(id){closeAll();$(id).classList.add("on");$("ov").classList.add("on")}
+function newPage(){stopSpeak();S.cur=null;save();closeAll();render();$("in").focus()}
+
+function renderModels(){
+ var l=$("mlist");l.innerHTML="";
+ Object.keys(MODELS).forEach(function(k){
+  var m=MODELS[k],b=document.createElement("button");b.className="opt"+(S.model===k?" sel":"");
+  var lf=left(k),badge="";dayRoll();if(LIM[k])badge='<span class="badge">'+Math.max(0,LIM[k]-S.cnt[k])+'/'+LIM[k]+' restantes</span>';
+  if(m.lim){badge=S.plan==="premium"?'<span class="badge">Premium · '+(PREM[k]-S.tot[k]).toLocaleString("fr-FR")+' restantes</span>':'<span class="badge">'+lf+"/"+m.lim+" gratuites</span>"}
+  b.innerHTML="<b><span>"+m.n+"</span>"+badge+"</b><small>"+m.d+"</small>";
+  b.onclick=function(){S.model=k;save();closeAll();applyPrefs()};
+  l.appendChild(b);
+ });
+}
+function showLock(k){
+ var m=MODELS[k];
+ $("locktxt").textContent="Tu as utilisé tes "+m.lim+" questions gratuites avec "+m.n+". Passe en Premium (35,90 €) pour des milliers de questions, ou reviens avec Flash qui reste gratuit.";
+ open("lock");
+}
+function upgrade(){S.plan="premium";save();closeAll();applyPrefs();toast("Premium activé (démo) ✨")}
+
+var busy=false;
+async function send(){
+ var inp=$("in"),txt=inp.value.trim();
+ if(!txt||busy)return;
+ stopSpeak();var k=S.model,m=MODELS[k];dayRoll();
+ if(LIM[k]&&S.cnt[k]>=LIM[k]){info("Limite du jour atteinte","<p>Tu as utilisé tes "+LIM[k]+" questions du jour avec "+m.n+". Reviens demain, ou passe sur <b>Flash</b> (illimité).</p>");return}
+ if(m.lim&&S.plan!=="premium"&&S.used[k]>=m.lim){showLock(k);return}
+ if(m.lim&&S.plan==="premium"&&S.tot[k]>=PREM[k]){toast("Quota Premium atteint pour "+m.n);return}
+ if(!conv()){var c={id:"c"+Date.now(),title:txt.slice(0,32),msgs:[]};S.convs.unshift(c);S.cur=c.id}
+ var c=conv();
+ c.msgs.push({r:"u",t:txt});
+ var am={r:"a",t:"",m:k};c.msgs.push(am);
+ if(m.lim){if(S.plan==="premium")S.tot[k]++;else S.used[k]++}bump(k,1);
+ inp.value="";inp.style.height="auto";save();render();
+ busy=true;$("send").disabled=true;
+ var body=$("msgs").lastChild.querySelector(".body");
+ try{
+  var sample=window.claude?await claude.use("sample"):null;
+  var hist=c.msgs.slice(0,-1).slice(-12).map(function(x){return{role:x.r==="u"?"user":"assistant",content:x.t}});
+  while(hist.length&&hist[0].role!=="user")hist.shift();
+  hist[0].content="[Consignes : "+m.sys+COMMON+"]\n\n"+hist[0].content;
+  var res=!sample?await viaApi(hist,k,function(t){am.t=t;body.innerHTML=md(t);$("msgs").scrollTop=$("msgs").scrollHeight}):await sample(hist,{modelTier:m.tier,cache:false,onText:function(o){am.t=o.text;body.innerHTML=md(o.text);$("msgs").scrollTop=$("msgs").scrollHeight}});
+  am.t=res.text||am.t;
+ }catch(e){
+  if(e&&e.code==="none")am.t="Mode démo : la connexion à l’IA n’est pas disponible dans cette vue. Ouvre la page publiée depuis ton compte Claude pour obtenir de vraies réponses.";
+  else if(e&&e.code==="not_granted")am.t="Autorisation refusée. Accepte la demande d’accès pour que Pixel IA puisse répondre.";
+  else if(e&&e.code==="rate_limited")am.t="Trop de demandes pour l’instant, réessaie dans un instant.";
+  else am.t=(e&&e.text)||"Oups, une erreur est survenue. Réessaie.";
+  if(m.lim){if(S.plan==="premium")S.tot[k]=Math.max(0,S.tot[k]-1);else S.used[k]=Math.max(0,S.used[k]-1)}bump(k,-1);
+ }
+ busy=false;$("send").disabled=false;save();render();
+}
+
+$("burger").onclick=function(){renderHist();open("drawer")};
+$("ov").onclick=closeAll;
+$("new").onclick=newPage;$("newtop").onclick=newPage;
+$("pill").onclick=function(){renderModels();open("models")};
+$("openset").onclick=function(){open("set")};
+$("setmodel").onclick=function(){renderModels();open("models")};
+$("send").onclick=send;
+$("in").addEventListener("keydown",function(e){if(e.key==="Enter"&&!e.shiftKey&&window.innerWidth>700){e.preventDefault();send()}});
+$("in").addEventListener("input",function(){this.style.height="auto";this.style.height=Math.min(this.scrollHeight,140)+"px"});
+document.querySelectorAll("#theme button").forEach(function(b){b.onclick=function(){S.theme=b.dataset.v;save();applyPrefs()}});
+document.querySelectorAll("#fs button").forEach(function(b){b.onclick=function(){S.fs=b.dataset.v;save();applyPrefs()}});
+$("golock").onclick=closeAll;$("closelock").onclick=closeAll;
+$("clear").onclick=function(){if(confirm("Effacer toutes les conversations ?")){S.convs=[];S.cur=null;save();closeAll();render()}};
+
+
+var speaking=null;
+function resetBtns(){document.querySelectorAll(".lis").forEach(function(x){x.className="lis";x.textContent="🔊 Écouter"})}
+function stopSpeak(){try{speechSynthesis.cancel()}catch(e){}speaking=null;resetBtns()}
+function listen(m,btn){
+ if(!("speechSynthesis" in window)){toast("Lecture vocale indisponible sur cet appareil");return}
+ if(speaking===m){stopSpeak();return}
+ stopSpeak();
+ var plain=m.t.replace(/```[\s\S]*?```/g," Bloc de code. ").replace(/[*#`_>|]/g,"").replace(/\s+/g," ").trim();
+ if(!plain)return;
+ var lang=/[éèêàùçôî]|\b(le|la|les|des|est|une|que|et|je|tu|pour)\b/i.test(plain)?"fr-FR":"en-US";
+ var v=null,vs=speechSynthesis.getVoices()||[];
+ var pool=vs.filter(function(x){return x.lang&&x.lang.toLowerCase().indexOf(lang.slice(0,2).toLowerCase())===0});
+ v=pool.find(function(x){return /google|amélie|thomas|audrey|siri|natural/i.test(x.name)})||pool[0]||null;
+ var sents=plain.match(/[^.!?;:]+[.!?;:]*\s*/g)||[plain],chunks=[],cur="";
+ sents.forEach(function(s){if((cur+s).length>170&&cur){chunks.push(cur);cur=s}else cur+=s});
+ if(cur)chunks.push(cur);
+ speaking=m;btn.className="lis on";btn.textContent="⏹ Arrêter";
+ chunks.forEach(function(t,i){
+  var u=new SpeechSynthesisUtterance(t);u.lang=lang;u.rate=parseFloat(S.rate)||1;if(v)u.voice=v;
+  if(i===chunks.length-1)u.onend=function(){if(speaking===m){speaking=null;resetBtns()}};
+  u.onerror=function(ev){if(ev.error!=="canceled"&&ev.error!=="interrupted"&&speaking===m){stopSpeak();toast("Lecture impossible ici")}};
+  speechSynthesis.speak(u);
+ });
+}
+document.querySelectorAll("#rate button").forEach(function(b){b.onclick=function(){S.rate=b.dataset.v;save();applyPrefs()}});
+
+var PERR="";
+function ptxt(r){return typeof r==="string"?r:(r&&r.message?(typeof r.message.content==="string"?r.message.content:(r.message.content||[]).map(function(x){return x.text||""}).join("")):(r&&r.text)||"")}
+async function viaPuter(hist,k,on){
+ if(!(window.puter&&puter.ai))return null;
+ var PM={flash:["gpt-4.1-nano"],think:["gpt-4.1-mini","gpt-4.1-nano"],pro:["gpt-4.1","gpt-4.1-mini","gpt-4.1-nano"]}[k];
+ for(var q=0;q<PM.length;q++){
+  try{
+   var resp=await puter.ai.chat(hist,{model:PM[q],stream:true});
+   var txt="";
+   if(resp&&resp[Symbol.asyncIterator]){for await(var part of resp){txt+=(part&&part.text)||"";if(on&&txt)on(txt)}}
+   else txt=ptxt(resp);
+   if(txt)return{text:txt};
+  }catch(e){
+   var msg=(e&&(e.message||(e.error&&e.error.message)||e.error))||"";
+   if(/auth|sign|login|cancel|popup|deni/i.test(String(msg))){PERR="Connecte-toi à ton compte Puter gratuit quand la fenêtre s’ouvre (autorise les fenêtres pop-up), puis réessaie.";break}
+  }
+ }
+ return null;
+}
+async function viaApi(hist,k,on){
+ var m=MODELS[k];
+ if(!PIXEL_API){
+  var g=await viaGemini(hist,k,on);if(g)return g;
+  if(GEMINI_KEY||S.gkey)throw {text:GERR};
+  var pr=await viaPuter2(hist,k,on);if(pr)return pr;throw {text:PERR}}
+ if(PIXEL_API){var r0=await fetch(PIXEL_API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:k,messages:hist})});var j0={};try{j0=await r0.json()}catch(e){}
+  if(!r0.ok||!j0.text){var em=String(j0.error||("Le serveur d’IA ne répond pas (erreur "+r0.status+")."));throw {text:/429|quota|exhaust|limit/i.test(em)?"Le quota gratuit est atteint pour le moment. Réessaie dans une minute, ou demain.":"Pixel IA n’a pas pu répondre. Détail : "+em.slice(0,140)}}
+  if(on)on(j0.text);return{text:j0.text}}
+ var msgs=[{role:"system",content:m.sys+COMMON}].concat(hist.map(function(x,i){return i===0?{role:x.role,content:x.content.replace(/^\[Consignes :[\s\S]*?\]\n\n/,"")}:x}));
+ var mod=k==="flash"?"openai-fast":"openai";
+ var urls=["https://gen.pollinations.ai/v1/chat/completions","https://text.pollinations.ai/openai"],last="";
+ for(var i=0;i<urls.length;i++){
+  try{var r=await fetch(urls[i],{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:mod,messages:msgs})});
+   if(!r.ok){last="erreur "+r.status;continue}
+   var j=await r.json();var t=j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content;
+   if(t)return{text:t};last="réponse vide"}catch(e){last="réseau"}
+ }
+ throw {text:(PERR?PERR+" ":"")+"Pixel IA n’a pas pu joindre l’IA ("+last+"). Réessaie dans un instant."};
+}
+function info(title,html){$("ititle").textContent=title;$("ibody").innerHTML=html;open("info")}
+function showBuy(){
+ var h='<div class="price">35,90 €</div><ul class="feat"><li>Espace de <b>1,5 To</b> (1 500 Go)</li><li>Pixel IA 1.5 Pro : '+PREM.pro.toLocaleString("fr-FR")+' questions</li><li>Pixel IA 1.3 Réflexion : '+PREM.think.toLocaleString("fr-FR")+' questions</li><li>Pixel IA 1.2 Flash : illimité</li></ul>';
+ if(PAY_URL)h+='<button class="btn" id="pay">Payer 35,90 €</button>';
+ else h+='<p class="note">Le paiement réel n’est pas encore connecté : il faut un service de paiement (par exemple Stripe) et un serveur pour valider les achats.</p><button class="btn" id="pay">Tester Premium (démo, sans paiement)</button>';
+ info("Pixel IA Premium",h);
+ $("pay").onclick=function(){if(PAY_URL)window.open(PAY_URL,"_blank");else upgrade()};
+}
+$("news").onclick=function(){info("Nouveautés",'<ul class="news"><li><b>1.6.0</b> : téléchargement de l’appli en fichier, installation plus fiable.</li><li><b>1.5.0</b> : connexion par e-mail et mot de passe qui fonctionne, compteurs de questions par modèle (Paramètres, Mes quotas).</li><li><b>1.4.0</b> : page de connexion (e-mail et mot de passe), réponses plus fiables avec plusieurs modèles de secours.</li><li><b>1.3.0</b> : nouveau logo.</li><li><b>1.2.1</b> : nouveau moteur d’IA (compte Puter gratuit demandé au premier message), bouton Arrêter corrigé.</li><li><b>1.2.0</b> : tout est gratuit et illimité, installation sur l’écran d’accueil du téléphone.</li><li><b>1.1.0</b> : bouton Écouter pour lire les réponses à voix haute.</li><li><b>1.0.0</b> : modèles 1.2 Flash, 1.3 Réflexion et 1.5 Pro, historique des conversations, paramètres.</li></ul>')};
+$("ver").onclick=function(){info("Code de version",'<p class="ver">Pixel IA v'+VER+'<br>Build 2026.10.19<br>1.2 Flash · 1.3 Réflexion · 1.5 Pro</p>')};
+$("iclose").onclick=closeAll;
+
+var VOICES=[],REFS=[];
+function loadVoices(){try{VOICES=speechSynthesis.getVoices()||[]}catch(e){}}
+try{loadVoices();speechSynthesis.onvoiceschanged=loadVoices}catch(e){}
+function pickVoice(lang){var p=VOICES.filter(function(x){return String(x.lang).replace("_","-").toLowerCase().indexOf(lang.slice(0,2))===0});return p.find(function(x){return x.localService})||p[0]||null}
+function listen2(m,btn,nov){
+ if(!("speechSynthesis" in window)||typeof SpeechSynthesisUtterance==="undefined"){toast("Voix non prise en charge dans cette vue. Ouvre la page dans Chrome.");return}
+ if(speaking===m&&!nov){stopSpeak();return}
+ var busy=speechSynthesis.speaking||speechSynthesis.pending;
+ if(busy)speechSynthesis.cancel();
+ resetBtns();
+ var plain=m.t.replace(/```[\s\S]*?```/g," Bloc de code. ").replace(/[*#`_>|]/g,"").replace(/\s+/g," ").trim();
+ if(!plain)return;
+ var lang=/[éèêàùçôî]|\b(le|la|les|des|est|une|que|et|je|tu|pour)\b/i.test(plain)?"fr-FR":"en-US";
+ loadVoices();var v=nov?null:pickVoice(lang);
+ var sents=plain.match(/[^.!?;:]+[.!?;:]*\s*/g)||[plain],chunks=[],cur="";
+ sents.forEach(function(s){if((cur+s).length>160&&cur){chunks.push(cur);cur=s}else cur+=s});
+ if(cur)chunks.push(cur);
+ speaking=m;btn.className="lis on";btn.textContent="⏹ Arrêter";
+ var started=false;REFS=[];
+ var go=function(){
+  try{speechSynthesis.resume()}catch(e){}
+  chunks.forEach(function(t,i){
+   var u=new SpeechSynthesisUtterance(t);u.lang=lang;u.rate=parseFloat(S.rate)||1;u.volume=1;if(v)u.voice=v;
+   u.onstart=function(){started=true};
+   if(i===chunks.length-1)u.onend=function(){if(speaking===m){speaking=null;resetBtns()}};
+   u.onerror=function(ev){
+    if(ev.error==="canceled"||ev.error==="interrupted"||speaking!==m)return;
+    if(!nov){speaking=null;try{speechSynthesis.cancel()}catch(e){}setTimeout(function(){listen2(m,btn,true)},150);return}
+    stopSpeak();toast("Lecture impossible ("+ev.error+")");
+   };
+   REFS.push(u);speechSynthesis.speak(u);
+  });
+ };
+ if(busy)setTimeout(go,150);else go();
+ var poll=setInterval(function(){if(speaking!==m){clearInterval(poll);return}if(started&&!speechSynthesis.speaking&&!speechSynthesis.pending){clearInterval(poll);speaking=null;resetBtns()}},600);
+ setTimeout(function(){if(speaking===m&&!started&&!speechSynthesis.speaking){stopSpeak();toast("Aucune voix détectée. Vérifie le volume et la synthèse vocale du téléphone, ou ouvre la page dans Chrome.")}},3000);
+}
+$("vt").onclick=function(){loadVoices();var n=VOICES.filter(function(x){return /^fr/i.test(x.lang)}).length;toast("Voix françaises trouvées : "+n);listen2({t:"Bonjour, je suis Pixel IA. Si tu m’entends, la voix fonctionne."},{})};
+async function dlFile(){
+ var c=document.documentElement.cloneNode(true);
+ ["msgs","hist","mlist","ibody","ititle"].forEach(function(i){var e=c.querySelector("#"+i);if(e)e.innerHTML=""});
+ c.querySelectorAll(".on").forEach(function(e){e.classList.remove("on")});
+ c.removeAttribute("style");c.removeAttribute("data-theme");
+ var t=c.querySelector("#toast");if(t)t.removeAttribute("style");
+ var html="<!DOCTYPE html>\n"+c.outerHTML;
+ try{var d=window.claude?await claude.use("downloads"):null;
+  if(d){await d.save({filename:"pixel-ia.html",data:html});toast("Fichier prêt");return}}catch(e){if(e&&e.code==="declined")return}
+ try{var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([html],{type:"text/html"}));a.download="pixel-ia.html";document.body.appendChild(a);a.click();a.remove();toast("Téléchargement lancé")}catch(e){toast("Téléchargement impossible ici")}
+}
+
+var DEF=null;
+window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();DEF=e});
+window.addEventListener("appinstalled",function(){toast("Pixel IA installée ✅")});
+async function install(){
+ if(window.matchMedia("(display-mode: standalone)").matches){toast("Pixel IA est déjà installée");return}
+ if(DEF){DEF.prompt();try{await DEF.userChoice}catch(e){}DEF=null;return}
+ info("Installer Pixel IA",'<ol class="news"><li>Ouvre le site dans <b>Chrome</b>.</li><li>Touche les <b>trois points ⋮</b> en haut à droite.</li><li>Choisis <b>« Installer l’application »</b> ou <b>« Ajouter à l’écran d’accueil »</b>.</li><li>L’icône Pixel IA apparaît sur ton téléphone.</li></ol>');
+}
+$("dl").onclick=install;$("dlf").onclick=dlFile;
+if("serviceWorker" in navigator&&location.protocol.indexOf("http")===0){navigator.serviceWorker.register("sw.js").catch(function(){})}
+
+var GOOGLE_CLIENT_ID="";
+var CH={flash:["gpt-4.1-nano","gpt-4o-mini","gpt-4.1-mini","gpt-4.1"],think:["gpt-4.1-mini","gpt-4o-mini","gpt-4.1","gpt-4.1-nano"],pro:["gpt-4.1","gpt-4o","gpt-4.1-mini","gpt-4.1-nano"]};
+function emsg(e){if(!e)return"erreur inconnue";if(typeof e==="string")return e;var x=e.message||(e.error&&(e.error.message||e.error))||e.code;if(x&&typeof x==="object")x=x.message||JSON.stringify(x);return String(x||JSON.stringify(e)).slice(0,140)}
+async function viaPuter2(hist,k,on){
+ if(!(window.puter&&puter.ai)){PERR="Le moteur d’IA n’a pas pu se charger. Vérifie ta connexion internet et recharge la page.";return null}
+ var errs=[];
+ for(var q=0;q<CH[k].length;q++){
+  try{
+   var resp=await puter.ai.chat(hist,{model:CH[k][q],stream:true});
+   var txt="";
+   if(resp&&resp[Symbol.asyncIterator]){for await(var part of resp){txt+=(part&&part.text)||"";if(on&&txt)on(txt)}}
+   else txt=ptxt(resp);
+   if(txt)return{text:txt};
+  }catch(e){errs.push(emsg(e))}
+ }
+ var m=errs[0]||"réponse vide";
+ PERR="Pixel IA n’a pas pu répondre. "+(/auth|sign|login|token|credit|fund|quota|402|401|limit/i.test(m)?"Reconnecte-toi (☰, Paramètres, Compte) : ton quota gratuit est peut-être atteint. ":"")+"Détail : "+m;
+ return null;
+}
+function hideLogin(){$("login").classList.remove("on");applyPrefs()}
+async function loginPuter(){
+ if(!(window.puter&&puter.auth)){$("lnote").textContent="Le service de connexion n’a pas pu se charger. Vérifie internet et recharge la page.";return}
+ try{
+  await puter.auth.signIn();
+  var u=await puter.auth.getUser();
+  S.user={name:(u&&(u.username||u.email))||"Utilisateur",email:(u&&u.email)||"",via:"puter"};save();hideLogin();toast("Connecté ✅");
+ }catch(e){$("lnote").textContent="Connexion annulée ou bloquée. Autorise les fenêtres pop-up puis réessaie."}
+}
+function initGoogle(){
+ if(!GOOGLE_CLIENT_ID)return;
+ var s=document.createElement("script");s.src="https://accounts.google.com/gsi/client";s.async=true;
+ s.onload=function(){try{
+  google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID,callback:function(r){try{
+   var p=JSON.parse(decodeURIComponent(escape(atob(r.credential.split(".")[1].replace(/-/g,"+").replace(/_/g,"/")))));
+   S.user={name:p.name||p.email,email:p.email,via:"google"};save();hideLogin();toast("Connecté avec Google ✅");
+  }catch(e){$("lnote").textContent="Connexion Google impossible."}}});
+  google.accounts.id.renderButton($("lgoogle"),{theme:"filled_blue",size:"large",width:300,text:"continue_with",locale:"fr"});
+ }catch(e){}};
+ document.head.appendChild(s);
+}
+var LIM={flash:0,think:5,pro:3};
+function dayRoll(){var d=new Date().toLocaleDateString("fr-CA");if(S.cnt.day!==d){S.cnt={day:d,flash:0,think:0,pro:0};save()}}
+function bump(k,n){dayRoll();S.cnt[k]=Math.max(0,(S.cnt[k]||0)+n);save()}
+function showQuota(){
+ dayRoll();var h="";
+ Object.keys(MODELS).forEach(function(k){
+  var l=LIM[k],u=S.cnt[k]||0;
+  h+='<div style="margin-bottom:14px"><b>'+MODELS[k].n+'</b><div class="note" style="margin:2px 0 6px">'+(l?'Restantes aujourd’hui : <b>'+Math.max(0,l-u)+'</b> sur '+l:'Illimité · '+u+' question'+(u>1?'s':'')+' aujourd’hui')+'</div>'+(l?'<div style="height:8px;background:var(--card);border-radius:6px;overflow:hidden"><div style="height:100%;width:'+Math.min(100,u/l*100)+'%;background:linear-gradient(90deg,var(--ac),var(--ac2))"></div></div>':'')+'</div>';
+ });
+ h+='<p class="note">Les compteurs repartent à zéro chaque jour. Le quota gratuit de ton compte Puter peut aussi limiter les réponses.</p>';
+ info("Mes quotas",h);
+}
+$("quota").onclick=showQuota;
+
+var GEMINI_KEY="",GM=null,GERR="",GDEF={flash:["gemini-3.6-flash","gemini-2.5-flash-lite","gemini-2.5-flash"],think:["gemini-3.6-flash","gemini-2.5-flash","gemini-2.5-flash-lite"],pro:["gemini-3.6-pro","gemini-3.5-pro","gemini-2.5-pro","gemini-3.6-flash"]};
+async function gModels(key){
+ if(GM)return GM;
+ var r=await fetch("https://generativelanguage.googleapis.com/v1beta/models?pageSize=200",{headers:{"x-goog-api-key":key}});
+ var j=await r.json();
+ if(!r.ok)throw new Error((j.error&&j.error.message)||("HTTP "+r.status));
+ GM=(j.models||[]).filter(function(m){return /generateContent/.test((m.supportedGenerationMethods||[]).join())&&/^models\/gemini-/.test(m.name)&&!/preview|exp|image|tts|live|audio|embed|vision|robotics|computer|thinking|customtools|learnlm|latest|-0\d\d/i.test(m.name)}).map(function(m){return{n:m.name.replace("models/",""),v:parseFloat((m.name.match(/gemini-(\d+(?:\.\d+)?)/)||[0,0])[1])}});
+ return GM;
+}
+function gChain(L,k){
+ function pick(re,ex){return L.filter(function(x){return re.test(x.n)&&!(ex&&ex.test(x.n))}).sort(function(a,b){return b.v-a.v}).map(function(x){return x.n})}
+ var lite=pick(/flash-lite/),fl=pick(/flash/,/lite/),pr=pick(/pro/);
+ var ch=k==="flash"?lite.concat(fl):k==="think"?fl.concat(lite):pr.concat(fl,lite);
+ ch=ch.filter(function(v,i,a){return a.indexOf(v)===i}).slice(0,4);
+ return ch.length?ch:GDEF[k];
+}
+async function viaGemini(hist,k,on){
+ GERR="";
+ var key=S.gkey||GEMINI_KEY;if(!key)return null;
+ var m=MODELS[k],L=[];
+ try{L=await gModels(key)}catch(e){L=[]}
+ var ch=gChain(L,k);
+ var contents=hist.map(function(x,i){var t=x.content;if(i===0)t=t.replace(/^\[Consignes :[\s\S]*?\]\n\n/,"");return{role:x.role==="user"?"user":"model",parts:[{text:t}]}});
+ var errs=[];
+ for(var i=0;i<ch.length;i++){
+  try{
+   var r=await fetch("https://generativelanguage.googleapis.com/v1beta/models/"+ch[i]+":generateContent",{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":key},body:JSON.stringify({systemInstruction:{parts:[{text:m.sys+COMMON}]},contents:contents})});
+   var j=await r.json();
+   if(!r.ok){errs.push((j.error&&j.error.message)||("HTTP "+r.status));continue}
+   var t=((j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[]).map(function(p){return p.text||""}).join("");
+   if(t){if(on)on(t);return{text:t}}
+   errs.push("réponse vide");
+  }catch(e){errs.push(emsg(e))}
+ }
+ var e0=String(errs[0]||"erreur");
+ GERR=/401|403|API key|credential|permission|unauthenticated|ACCESS_TOKEN/i.test(e0)?"La clé IA est refusée par Google (invalide, révoquée ou bloquée). Crée-en une nouvelle sur aistudio.google.com et colle-la dans Paramètres, Clé IA.":/quota|429|rate|exhaust|limit/i.test(e0)?"Le quota gratuit de la clé est atteint pour le moment. Réessaie dans une minute, ou demain.":"Pixel IA n’a pas pu répondre. Détail : "+e0.slice(0,140);
+ return null;
+}
+function showKey(){
+ var has=!!S.gkey;
+ info("Clé IA gratuite (Gemini)",'<ol class="news"><li>Ouvre <b>aistudio.google.com</b> et connecte-toi avec Google.</li><li>Touche <b>Get API key</b>, puis <b>Create API key</b>.</li><li>Copie la clé et colle-la ci-dessous.</li></ol><input id="gk" class="fld" type="password" placeholder="Colle ta clé ici" style="margin:10px 0" value="'+esc(S.gkey||"")+'"><button class="btn" id="gks">Enregistrer</button>'+(has?'<button class="btn2" id="gkd" style="margin-top:8px">Supprimer la clé</button>':'')+'<p class="note">Cette clé reste sur ton téléphone. Pour que tous tes utilisateurs en profitent, colle-la dans GEMINI_KEY dans index.html.</p>');
+ $("gks").onclick=function(){var v=$("gk").value.trim();if(v.length<20){toast("Clé invalide");return}S.gkey=v;GM=null;save();closeAll();toast("Clé enregistrée ✅")};
+ if($("gkd"))$("gkd").onclick=function(){delete S.gkey;GM=null;save();closeAll();toast("Clé supprimée")};
+}
+$("gkeybtn").onclick=showKey;
+$("pconn").onclick=async function(){
+ if(!(window.puter&&puter.auth)){toast("Moteur Puter non chargé : vérifie internet");return}
+ try{await puter.auth.signIn();toast("Compte IA connecté ✅")}catch(e){toast("Connexion Puter impossible : "+emsg(e))}
+};
+async function sha(s){try{var b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,"0")}).join("")}catch(e){var h=5381;for(var i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return "f"+h}}
+function accts(){try{return JSON.parse(localStorage.getItem("pixelia_acc")||"{}")}catch(e){return{}}}
+function saveAccts(a){try{localStorage.setItem("pixelia_acc",JSON.stringify(a))}catch(e){}}
+function lnote(t){$("lnote").textContent=t}
+function readForm(){var m=$("lmail").value.trim().toLowerCase(),p=$("lpass").value;if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)){lnote("Adresse e-mail invalide.");return null}if(p.length<6){lnote("Le mot de passe doit faire au moins 6 caractères.");return null}return{m:m,p:p}}
+async function doSignup(){var f=readForm();if(!f)return;var a=accts();if(a[f.m]){lnote("Un compte existe déjà avec cet e-mail. Touche Se connecter.");return}var salt=Math.random().toString(36).slice(2);a[f.m]={salt:salt,hash:await sha(salt+f.p)};saveAccts(a);S.user={name:f.m.split("@")[0],email:f.m,via:"local"};save();$("lpass").value="";hideLogin();toast("Compte créé ✅")}
+async function doLogin(){var f=readForm();if(!f)return;var a=accts(),c=a[f.m];if(!c){lnote("Aucun compte avec cet e-mail. Touche Créer un compte.");return}if(c.hash!==await sha(c.salt+f.p)){lnote("Mot de passe incorrect.");return}S.user={name:f.m.split("@")[0],email:f.m,via:"local"};save();$("lpass").value="";hideLogin();toast("Connecté ✅")}
+$("lputer").onclick=doLogin;$("lnew").onclick=doSignup;
+$("lguest").onclick=function(){S.user={guest:true};save();hideLogin()};
+$("accbtn").onclick=async function(){
+ if(S.user&&S.user.via==="puter"){try{if(window.puter&&puter.auth)puter.auth.signOut()}catch(e){}}
+ S.user=null;save();closeAll();applyPrefs();$("login").classList.add("on");
+};
+if(!S.user)$("login").classList.add("on");
+initGoogle();
+render();
+</script>
+</body></html>
